@@ -9,7 +9,7 @@ using System.IO;
 namespace Panorama180ToPinhole
 {
     [RequireComponent(typeof(Camera))]
-    public class VR180PanoramaToPinhole : MonoBehaviour
+    public class Panorama180ToPinhole : MonoBehaviour
     {
         [SerializeField] VideoClip VR180VideoClip;   // VR180のmp4を指定.
 
@@ -99,6 +99,7 @@ namespace Panorama180ToPinhole
             GameObject prefab = (GameObject)Resources.Load("Prefabs/HalfSphere");
             if (prefab != null) {
                 m_HalfSphere = Instantiate(prefab, Vector3.zero, Quaternion.Euler(0, 180, 0));
+                m_HalfSphere.name = "VR180_HalfSphere";
                 m_HalfSphere.transform.localScale = new Vector3(scaleV, scaleV, scaleV);
             }
         }
