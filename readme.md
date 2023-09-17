@@ -67,6 +67,6 @@ Panorama180ToPinholeコンポーネントのパラメータの説明です。
 |Camera FOV|Pinhole画像を作成するカメラの視野角度（度数）|     
 |Camera Tilt|カメラの視線方向からの向きのずれ（度数）<br>![panoramaToPinhole_09.png](./images/panoramaToPinhole_09.png)<br>左右のカメラである"camera_1"、"camera_2"はY軸中心で指定の角度分傾きます。<br>上下のカメラである"camera_3"、"camera_4"はX軸中心で指定の角度分傾きます。|     
 |Texture Size|出力するテクスチャサイズをピクセル数で指定|     
-|Capture FPS|1秒でサンプリングするフレーム数。<br>1.0の場合は、1秒ごとに1フレーム分（合計5枚）ごとに出力されることになります。|     
-|Output Path|出力フォルダ。<br>相対パスで指定した場合は、Projectのルートからの相対パス指定になります。|     
+|Capture FPS|1秒でサンプリングするフレーム数。<br>1.0の場合は、1秒ごとに1フレーム分（合計5枚）が出力されることになります。|     
+|Output Path|出力フォルダ。<br>相対パスで指定した場合は、Projectのルートからのパスになります。絶対パス指定も可能です（フォルダ選択のUIは作ってません、、、）。|     
 
