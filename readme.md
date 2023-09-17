@@ -7,6 +7,11 @@ Panorama180 To Pinholeは、パノラマ180のSideBySideの動画から1フレ�
 ![panoramaToPinhole_01.jpg](./images/panoramaToPinhole_01.jpg)     
 この左側の画像が使用されます。     
 
+## 開発環境
+
+* Windows 10
+* Unity 2022.3.6f1 (URP)
+
 ## 使い方
 
 Unity Editorの**URP**に対応しています。      
@@ -24,9 +29,9 @@ Post Processingの影響を受けないように、"Global Volume"を選択し�
 
 ### カメラのコンポーネントに"Panorama180ToPinhole"を追加
 
-"Main Camera"を選択し、Inspectorウィンドウで"Ad Component"ボタンを押します。     
+"Main Camera"を選択し、Inspectorウィンドウで"Add Component"ボタンを押します。     
 ![panoramaToPinhole_04.png](./images/panoramaToPinhole_04.png)     
-Scriptsより"Panorama180ToPinhole"-"Panorama180ToPinhole"を選択します。     
+Scriptsより"Panorama180ToPinhole" - "Panorama180ToPinhole"を選択します。     
 
 Panorama180ToPinholeコンポーネントが追加されました。     
 ![panoramaToPinhole_05.png](./images/panoramaToPinhole_05.png)     

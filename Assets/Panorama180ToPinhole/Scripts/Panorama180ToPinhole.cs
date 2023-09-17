@@ -136,11 +136,10 @@ namespace Panorama180ToPinhole
                 RenderTexture rt = m_renderTextureList[i];
 
                 // ファイル出力.
-                string filePath = $"{OutputPath}/image_" + string.Format("{0:D5}", m_counter) + ".jpg";
+                string filePath = $"{OutputPath}/image_{i}" + string.Format("{0:D5}", m_counter) + ".jpg";
                 SaveRenderTextureToFile(rt, filePath);
-
-                m_counter++;
             }
+            m_counter++;
 
             m_outputBusy = false;
 
