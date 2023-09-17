@@ -18,7 +18,7 @@ Unity Editorの**URP**に対応しています。
 
 ### プロジェクトにPanorama180 To Pinholeを追加
 
-"Panorama180ToPinhole"フォルダをUnityのプロジェクトにドロップして配置します。     
+"[Panorama180ToPinhole](https://github.com/ft-lab/Unity_Panorama180ToPinhole/tree/main/Assets/Panorama180ToPinhole)"フォルダをUnityのプロジェクトにドロップして配置します。     
 ![panoramaToPinhole_02.png](./images/panoramaToPinhole_02.png)     
 
 ### 新規シーンを作成
