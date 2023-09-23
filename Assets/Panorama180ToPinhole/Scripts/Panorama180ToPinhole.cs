@@ -11,13 +11,44 @@ namespace Panorama180ToPinhole
     [RequireComponent(typeof(Camera))]
     public class Panorama180ToPinhole : MonoBehaviour
     {
-        [SerializeField] VideoClip VR180VideoClip;   // VR180のmp4を指定.
+        // カメラの種類.
+        public enum VideoEyesType {
+            OneEye,
+            TwoEyes
+        }
 
-        [SerializeField] float CameraFOV = 60.0f;   // 視野角度.
-        [SerializeField] float CameraTilt = 40.0f;   // 各カメラの傾き.
-        [SerializeField] Vector2Int TextureSize = new Vector2Int(800, 600);   // テクスチャサイズ.
-        [SerializeField] double CaptureFPS = 2.0;   // キャプチャのfps.
-        [SerializeField] string OutputPath = "Output";  // 出力パス.
+        // レンズの種類.
+        public enum VideoLensType {
+            Equirectangular,
+            FishEye
+        }
+
+        [SerializeField] [HideInInspector] VideoClip VR180VideoClip;   // VR180のmp4を指定.
+        [SerializeField] [HideInInspector] bool StopVideo = false;
+
+        // カメラのパラメータ.
+        [SerializeField] [HideInInspector] bool CameraParam_foldout = true;        // Cameraグループの表示.
+        [SerializeField] [HideInInspector] VideoEyesType CameraEyesType = VideoEyesType.TwoEyes;   // 単眼か2眼か.
+        [SerializeField] [HideInInspector] VideoLensType CameraLensType = VideoLensType.Equirectangular;   // パノラマ180か魚眼か.
+
+        // キャプチャのパラメータ.
+        [SerializeField] [HideInInspector] bool CaptureParam_foldout = true;   // Captureグループの表示.
+        [SerializeField] [HideInInspector] float CaptureCameraFOV = 60.0f;   // 視野角度.
+        [SerializeField] [HideInInspector] float CaptureCameraTiltH = 30.0f;   // 各カメラの傾き(水平).
+        [SerializeField] [HideInInspector] float CaptureCameraTiltV = 20.0f;   // 各カメラの傾き（垂直）.
+
+        // 出力関連のパラメータ.
+        [SerializeField] [HideInInspector] bool OutputParam_foldout = true;   // Outputグループの表示.
+
+        [SerializeField] [HideInInspector] Vector2Int OutputTextureSize = new Vector2Int(800, 600);   // テクスチャサイズ.
+        [SerializeField] [HideInInspector] double OutputCaptureFPS = 2.0;   // キャプチャのfps.
+        [SerializeField] [HideInInspector] bool OutputFiles = true;   // ファイルを出力するか.
+        [SerializeField] [HideInInspector] string OutputPath = "Output";  // 出力パス.
+
+        // ------------------------------------.
+
+        private RenderTexture m_backgroundRT = null;         // 動画をレンダリングするテクスチャ.
+        private RenderTexture m_resultRT = null;         // 結果のテクスチャ.
 
         private List<GameObject> m_camerasList = null;              // Pinhole投影を行うカメラ.
         private List<RenderTexture> m_renderTextureList = null;     // RenderTexture.
@@ -33,6 +64,8 @@ namespace Panorama180ToPinhole
 
         private Texture2D m_tex = null;     // 作業用のテクスチャ.
 
+        private Material m_FishEyeMat = null;  // 魚眼変換の行列.
+
         // Start is called before the first frame update
         void Start()
         {
@@ -44,6 +77,11 @@ namespace Panorama180ToPinhole
 
             // カメラを作成.
             CreatePinholeCameras();
+
+            Shader shader = Shader.Find("Hidden/Panorama180ToPinhole/FishEyeToEquirectangular180");
+            if (shader != null) {
+                m_FishEyeMat = new Material(shader);
+            }
 
             // Video Playerを作成.
             CreateVideoPlayer();
@@ -69,10 +107,17 @@ namespace Panorama180ToPinhole
             for (int i = 0; i < m_renderTextureList.Count; ++i) {
                 if (m_renderTextureList[i] != null) Destroy(m_renderTextureList[i]);
             }
+            if (m_backgroundRT != null) Destroy(m_backgroundRT);
+            if (m_resultRT != null) Destroy(m_resultRT);
+            if (m_FishEyeMat != null) Destroy(m_FishEyeMat);
+
             m_HalfSphere = null;
             m_tex = null;
             m_renderTextureList = null;
             m_videoG = null;
+            m_backgroundRT = null;
+            m_resultRT = null;
+            m_FishEyeMat = null;
         }
 
         /**
@@ -96,7 +141,7 @@ namespace Panorama180ToPinhole
         {
             if (m_HalfSphere != null) return;
 
-            GameObject prefab = (GameObject)Resources.Load("Prefabs/HalfSphere");
+            GameObject prefab = (GameObject)Resources.Load("Prefabs/HalfSphere_full");
             if (prefab != null) {
                 m_HalfSphere = Instantiate(prefab, Vector3.zero, Quaternion.Euler(0, 180, 0));
                 m_HalfSphere.name = "VR180_HalfSphere";
@@ -104,14 +149,49 @@ namespace Panorama180ToPinhole
             }
         }
 
+        /**
+         * 背景を描画.
+         */
+         void UpdateBackgroundTexture()
+         {
+            if (m_HalfSphere != null && m_backgroundRT != null && m_FishEyeMat != null && m_resultRT != null) {
+                m_FishEyeMat.SetTexture("_MainTex", m_backgroundRT);
+                m_FishEyeMat.SetVector("_BackgroundColor", new Vector4(0, 0, 0, 1));
+                m_FishEyeMat.SetInt("_IsSBS", (CameraEyesType == VideoEyesType.TwoEyes) ? 0 : 1);
+                m_FishEyeMat.SetInt("_FishEye", (CameraLensType == VideoLensType.Equirectangular) ? 0 : 1);
+
+                // 元画像のアスペクト比.
+                float aspect = (float)m_backgroundRT.width / (float)m_backgroundRT.height;
+                m_FishEyeMat.SetFloat("_TextureAspect", aspect);
+
+                Graphics.Blit(null, m_resultRT, m_FishEyeMat);
+            }
+         }
+
         // Update is called once per frame
         void Update()
         {
+            // カメラのパラメータを変更.
+            UpdateCameraParameters();
+
+            // VideoClipからRenderTextureに反映.
+            UpdateBackgroundTexture();
+
+            if (!m_outputBusy)
+            {
+                if (StopVideo) {
+                    m_videoPlayer.Pause();
+                    return;
+                } else {
+                    m_videoPlayer.Play();
+                }
+            }
+
             // 一定間隔でキャプチャして出力.
             if (!m_outputBusy)
             {
                 if (m_videoPlayer != null && m_videoPlayer.isPlaying) {
-                    double delta = 1.0 / Math.Max(CaptureFPS, 0.0001);
+                    double delta = 1.0 / Math.Max(OutputCaptureFPS, 0.0001);
                     double t = m_videoPlayer.time;
                     if (t - m_curTime >= delta)
                     {
@@ -136,14 +216,17 @@ namespace Panorama180ToPinhole
                 RenderTexture rt = m_renderTextureList[i];
 
                 // ファイル出力.
-                string filePath = $"{OutputPath}/image_{i}" + string.Format("{0:D5}", m_counter) + ".jpg";
-                SaveRenderTextureToFile(rt, filePath);
+                if (OutputFiles)
+                {
+                    string filePath = $"{OutputPath}/image_{i}" + string.Format("{0:D5}", m_counter) + ".jpg";
+                    SaveRenderTextureToFile(rt, filePath);
+                }
             }
             m_counter++;
 
             m_outputBusy = false;
 
-            {
+            if (OutputFiles) {
                 int persV = (int)((m_curTime * 100.0) / m_videoPlayer.length);
                 Debug.Log($"Process : {persV} %");
             }
@@ -151,8 +234,8 @@ namespace Panorama180ToPinhole
             // ビデオを再開.
             m_videoPlayer.Play();
 
-            {
-                double delta = 1.0 / Math.Max(CaptureFPS, 0.0001);
+            if (OutputFiles) {
+                double delta = 1.0 / Math.Max(OutputCaptureFPS, 0.0001);
                 if (m_curTime + delta >= m_videoPlayer.length) {
                     Debug.Log("Finished!");
                 }
@@ -189,7 +272,7 @@ namespace Panorama180ToPinhole
         void CreatePinholeCameras()
         {
             // RenderTextureを作成.
-            CreateRenderTextures(TextureSize.x, TextureSize.y);
+            CreateRenderTextures(OutputTextureSize.x, OutputTextureSize.y);
 
             // カメラを作成.
             m_camerasList = new List<GameObject>();
@@ -203,6 +286,7 @@ namespace Panorama180ToPinhole
                 Camera c = g.AddComponent<Camera>();
                 c.nearClipPlane = 0.1f;
                 c.farClipPlane = 100000.0f;
+                //c.targetDisplay = 1 + i;
 
                 if (m_renderTextureList != null) {
                     RenderTexture rt = m_renderTextureList[i];
@@ -244,7 +328,7 @@ namespace Panorama180ToPinhole
                 Camera c = g.GetComponent<Camera>();
                 if (c == null) continue;
 
-                c.fieldOfView = CameraFOV;
+                c.fieldOfView = CaptureCameraFOV;
 
                 Vector3 cameraRot = new Vector3();
                 switch (i)
@@ -252,22 +336,21 @@ namespace Panorama180ToPinhole
                 case 0:
                     break;
                 case 1:
-                    cameraRot.y = -CameraTilt;
+                    cameraRot.y = -CaptureCameraTiltH;
                     break;
                 case 2:
-                    cameraRot.y = +CameraTilt;
+                    cameraRot.y = +CaptureCameraTiltH;
                     break;
                 case 3:
-                    cameraRot.x = -CameraTilt;
+                    cameraRot.x = -CaptureCameraTiltV;
                     break;
                 case 4:
-                    cameraRot.x = +CameraTilt;
+                    cameraRot.x = +CaptureCameraTiltV;
                     break;
                 }
                 g.transform.localRotation = Quaternion.Euler(cameraRot.x, cameraRot.y, cameraRot.z);
             }
         }
-
 
         /**
          * Video Playerを作成.
@@ -284,6 +367,7 @@ namespace Panorama180ToPinhole
         void InitVideo()
         {
             if (m_videoG == null || m_HalfSphere == null) return;
+            if (VR180VideoClip == null) return;
 
             MeshRenderer meshR = m_HalfSphere.GetComponent<MeshRenderer>();
             if (meshR == null) return;
@@ -292,11 +376,27 @@ namespace Panorama180ToPinhole
             m_videoPlayer = m_videoG.GetComponent<VideoPlayer>();
             m_videoPlayer.clip = VR180VideoClip;
             m_videoPlayer.renderMode = VideoRenderMode.RenderTexture;
+            m_videoPlayer.aspectRatio = VideoAspectRatio.Stretch;
 
-            Texture tex = mat.GetTexture("_MainTex");
-            if (tex != null && (tex is RenderTexture)) {
-                m_videoPlayer.targetTexture = (RenderTexture)tex;
+            if (m_backgroundRT == null) {
+                int texWidth  = (int)VR180VideoClip.width;
+                int texHeight = (int)VR180VideoClip.height;
+                m_backgroundRT = new RenderTexture(texWidth, texHeight, 16, RenderTextureFormat.ARGB32);
+                m_backgroundRT.Create();
+                m_backgroundRT.name = "backgroundRenderTexture";
             }
+            if (m_resultRT == null) {
+                int texWidth  = 4096;
+                int texHeight = 4096;
+                m_resultRT = new RenderTexture(texWidth, texHeight, 16, RenderTextureFormat.ARGB32);
+                m_resultRT.Create();
+                m_resultRT.name = "resultRenderTexture";
+            }
+
+            if (m_backgroundRT != null) {
+                m_videoPlayer.targetTexture = m_backgroundRT;
+            }
+            mat.SetTexture("_MainTex", m_resultRT);
 
             m_videoPlayer.isLooping = false;
             m_videoPlayer.audioOutputMode = VideoAudioOutputMode.None;
