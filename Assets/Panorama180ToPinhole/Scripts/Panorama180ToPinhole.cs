@@ -6,6 +6,8 @@ using UnityEngine.Video;
 using System;
 using System.IO;
 
+#pragma warning disable 0414
+
 namespace Panorama180ToPinhole
 {
     [RequireComponent(typeof(Camera))]
@@ -23,7 +25,7 @@ namespace Panorama180ToPinhole
             FishEye
         }
 
-        [SerializeField] [HideInInspector] VideoClip VR180VideoClip;   // VR180のmp4を指定.
+        [SerializeField] [HideInInspector] VideoClip PanoramaVideoClip;   // パノラマ180または魚眼のmp4を指定.
         [SerializeField] [HideInInspector] bool StopVideo = false;
 
         // カメラのパラメータ.
@@ -367,20 +369,20 @@ namespace Panorama180ToPinhole
         void InitVideo()
         {
             if (m_videoG == null || m_HalfSphere == null) return;
-            if (VR180VideoClip == null) return;
+            if (PanoramaVideoClip == null) return;
 
             MeshRenderer meshR = m_HalfSphere.GetComponent<MeshRenderer>();
             if (meshR == null) return;
             Material mat = meshR.sharedMaterial;
 
             m_videoPlayer = m_videoG.GetComponent<VideoPlayer>();
-            m_videoPlayer.clip = VR180VideoClip;
+            m_videoPlayer.clip = PanoramaVideoClip;
             m_videoPlayer.renderMode = VideoRenderMode.RenderTexture;
             m_videoPlayer.aspectRatio = VideoAspectRatio.Stretch;
 
             if (m_backgroundRT == null) {
-                int texWidth  = (int)VR180VideoClip.width;
-                int texHeight = (int)VR180VideoClip.height;
+                int texWidth  = (int)PanoramaVideoClip.width;
+                int texHeight = (int)PanoramaVideoClip.height;
                 m_backgroundRT = new RenderTexture(texWidth, texHeight, 16, RenderTextureFormat.ARGB32);
                 m_backgroundRT.Create();
                 m_backgroundRT.name = "backgroundRenderTexture";

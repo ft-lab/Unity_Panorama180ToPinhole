@@ -25,7 +25,7 @@ namespace Panorama180ToPinhole
         public override void OnInspectorGUI () {
             serializedObject.Update();
 
-            var VR180VideoClip = serializedObject.FindProperty("VR180VideoClip");
+            var PanoramaVideoClip = serializedObject.FindProperty("PanoramaVideoClip");
             var StopVideo = serializedObject.FindProperty("StopVideo");
 
             var CameraParam_foldout = serializedObject.FindProperty("CameraParam_foldout");
@@ -48,7 +48,7 @@ namespace Panorama180ToPinhole
 
             GUI.enabled = true;
 
-            VR180VideoClip.objectReferenceValue = (VideoClip)EditorGUILayout.ObjectField("Video Clip", VR180VideoClip.objectReferenceValue, typeof(VideoClip), false);
+            PanoramaVideoClip.objectReferenceValue = (VideoClip)EditorGUILayout.ObjectField("Video Clip", PanoramaVideoClip.objectReferenceValue, typeof(VideoClip), false);
             StopVideo.boolValue = EditorGUILayout.Toggle("Stop Video", StopVideo.boolValue);
 
             CameraParam_foldout.boolValue = EditorGUILayout.Foldout(CameraParam_foldout.boolValue, "Camera");

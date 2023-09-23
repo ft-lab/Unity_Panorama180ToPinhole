@@ -1,11 +1,13 @@
 # 概要
 
-Panorama180 To Pinholeは、パノラマ180のSideBySideの動画から1フレーム5枚のPinholeとしてのキャプチャを行いファイル出力するアセットです。     
+Panorama180 To Pinholeは、パノラマ180のSideBySide、またはFishEyeの動画から1フレーム5枚のPinholeとしてのキャプチャを行いファイル出力するアセットです。     
 パノラマ画像は魚眼のゆがみがありますが、これをゆがみのない画像にして出力します。     
 
 元の動画は以下のようなEquirectangularで180度分を使用した、ステレオの配置です。      
 ![panoramaToPinhole_01.jpg](./images/panoramaToPinhole_01.jpg)     
 この左側の画像が使用されます。     
+
+また、単眼の指定にも対応しています。      
 
 ## 開発環境
 
@@ -37,7 +39,7 @@ Panorama180ToPinholeコンポーネントが追加されました。
 ![panoramaToPinhole_05.png](./images/panoramaToPinhole_05.png)     
 
 パノラマ180(SideBySide)の動画をプロジェクトにインポートします。      
-これをPanorama180ToPinholeコンポーネントの"VR180 Video Clip"にドロップします。     
+これをPanorama180 To Pinholeコンポーネントの"Video Clip"にドロップします。     
 ![panoramaToPinhole_06.png](./images/panoramaToPinhole_06.png)     
 
 ### Play
@@ -63,10 +65,15 @@ Panorama180ToPinholeコンポーネントのパラメータの説明です。
 
 |パラメータ名|説明|     
 |---|---|     
-|VR180 Video Clip|パノラマ180ステレオ(Side By Side)の動画|     
-|Camera FOV|Pinhole画像を作成するカメラの視野角度（度数）|     
-|Camera Tilt|カメラの視線方向からの向きのずれ（度数）<br>![panoramaToPinhole_09.png](./images/panoramaToPinhole_09.png)<br>左右のカメラである"camera_1"、"camera_2"はY軸中心で指定の角度分傾きます。<br>上下のカメラである"camera_3"、"camera_4"はX軸中心で指定の角度分傾きます。|     
-|Texture Size|出力するテクスチャサイズをピクセル数で指定|     
-|Capture FPS|1秒でサンプリングするフレーム数。<br>1.0の場合は、1秒ごとに1フレーム分（合計5枚）が出力されることになります。|     
-|Output Path|出力フォルダ。<br>相対パスで指定した場合は、Projectのルートからのパスになります。絶対パス指定も可能です（フォルダ選択のUIは作ってません、、、）。|     
+|Video Clip|パノラマ180ステレオ(Side By Side)の動画、<br>FishEyeの動画を指定。<br>単眼、パノラマのどちらでも指定できます。|     
+|Stop Video|再生中の動画を一時停止します。|     
+|Camera - Eye Type|Single Eye : 動画は単眼<br>Two Sides(Side By Side) : 動画はステレオ（Side By Side）|     
+|Camera - Lens Type|EquirectangularまたはFish Eyeを選択。|     
+|Capture - Camera FOV(H)|Pinhole画像を作成するカメラの垂直視野角度（度数）|     
+|Capture - Camera Tilt(H)|カメラの視線方向からの水平の向きのずれ（度数）<br>![panoramaToPinhole_09.png](./images/panoramaToPinhole_09.png)<br>左右のカメラである"camera_1"、"camera_2"はY軸中心で指定の角度分傾きます。|     
+|Capture - Camera Tilt(V)|カメラの視線方向からの垂直の向きのずれ（度数）<br>上下のカメラである"camera_3"、"camera_4"はX軸中心で指定の角度分傾きます。|     
+|Output - Output Files|Pinholeの静止画を出力する場合はOnにします。|     
+|Output - Texture Size|出力するテクスチャサイズをピクセル数で指定|     
+|Output - Capture fps|1秒でサンプリングするフレーム数。<br>1.0の場合は、1秒ごとに1フレーム分（合計5枚）が出力されることになります。|     
+|Output - Output Path|出力フォルダ。<br>相対パスで指定した場合は、Projectのルートからのパスになります。絶対パス指定も可能です（フォルダ選択のUIは作ってません、、、）。|     
 
