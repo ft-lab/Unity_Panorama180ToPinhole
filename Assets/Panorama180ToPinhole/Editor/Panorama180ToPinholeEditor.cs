@@ -31,11 +31,9 @@ namespace Panorama180ToPinhole
             var CameraParam_foldout = serializedObject.FindProperty("CameraParam_foldout");
             var CameraEyesType = serializedObject.FindProperty("CameraEyesType");
             var CameraLensType = serializedObject.FindProperty("CameraLensType");
-            var CameraFOVH = serializedObject.FindProperty("CameraFOVH");
-            var CameraFOVV = serializedObject.FindProperty("CameraFOVV");
-            var CameraLensZScale = serializedObject.FindProperty("CameraLensZScale");
 
             var CaptureParam_foldout = serializedObject.FindProperty("CaptureParam_foldout");
+            var CaptureBackgroundTextureSize = serializedObject.FindProperty("CaptureBackgroundTextureSize");
             var CaptureCameraFOV = serializedObject.FindProperty("CaptureCameraFOV");
             var CaptureCameraTiltH = serializedObject.FindProperty("CaptureCameraTiltH");
             var CaptureCameraTiltV = serializedObject.FindProperty("CaptureCameraTiltV");
@@ -59,6 +57,7 @@ namespace Panorama180ToPinhole
 
             CaptureParam_foldout.boolValue = EditorGUILayout.Foldout(CaptureParam_foldout.boolValue, "Capture");
             if (CaptureParam_foldout.boolValue) {
+                CaptureBackgroundTextureSize.intValue = EditorGUILayout.Popup("Background Texture Size", CaptureBackgroundTextureSize.intValue, new string[]{"1024", "2048", "4096", "8192"});
                 CaptureCameraFOV.floatValue = EditorGUILayout.Slider("Camera FOV(H)", CaptureCameraFOV.floatValue, 10.0f, 180.0f);
                 CaptureCameraTiltH.floatValue = EditorGUILayout.Slider("Camera Tilt(H)", CaptureCameraTiltH.floatValue, 0.0f, 90.0f);
                 CaptureCameraTiltV.floatValue = EditorGUILayout.Slider("Camera Tilt(V)", CaptureCameraTiltV.floatValue, 0.0f, 90.0f);

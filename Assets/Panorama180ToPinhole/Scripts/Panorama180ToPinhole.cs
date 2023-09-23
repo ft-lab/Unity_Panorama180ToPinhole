@@ -25,6 +25,14 @@ namespace Panorama180ToPinhole
             FishEye
         }
 
+        // 動画を貼り付ける背景のRenderTextureのサイズ.
+        public enum BackgroundTextureSize {
+            TextureSize_1024,
+            TextureSize_2048,
+            TextureSize_4096,
+            TextureSize_8192
+        }
+
         [SerializeField] [HideInInspector] VideoClip PanoramaVideoClip;   // パノラマ180または魚眼のmp4を指定.
         [SerializeField] [HideInInspector] bool StopVideo = false;
 
@@ -35,6 +43,7 @@ namespace Panorama180ToPinhole
 
         // キャプチャのパラメータ.
         [SerializeField] [HideInInspector] bool CaptureParam_foldout = true;   // Captureグループの表示.
+        [SerializeField] [HideInInspector] BackgroundTextureSize CaptureBackgroundTextureSize = BackgroundTextureSize.TextureSize_4096;   // 背景として描画するRenderTextureのサイズ.
         [SerializeField] [HideInInspector] float CaptureCameraFOV = 60.0f;   // 視野角度.
         [SerializeField] [HideInInspector] float CaptureCameraTiltH = 30.0f;   // 各カメラの傾き(水平).
         [SerializeField] [HideInInspector] float CaptureCameraTiltV = 20.0f;   // 各カメラの傾き（垂直）.
@@ -364,6 +373,18 @@ namespace Panorama180ToPinhole
         }
 
         /**
+         * 背景のテクスチャサイズを数値で取得.
+         */
+        int GetTextureSize(BackgroundTextureSize bTexSize)
+        {
+            if (bTexSize == BackgroundTextureSize.TextureSize_1024) return 1024;
+            else if (bTexSize == BackgroundTextureSize.TextureSize_2048) return 2048;
+            else if (bTexSize == BackgroundTextureSize.TextureSize_4096) return 4096;
+            else if (bTexSize == BackgroundTextureSize.TextureSize_8192) return 8192;
+            return 4096;
+        }
+
+        /**
          * Video Playerの再生を初期化（停止）.
          */
         void InitVideo()
@@ -388,8 +409,8 @@ namespace Panorama180ToPinhole
                 m_backgroundRT.name = "backgroundRenderTexture";
             }
             if (m_resultRT == null) {
-                int texWidth  = 4096;
-                int texHeight = 4096;
+                int texWidth  = GetTextureSize(CaptureBackgroundTextureSize);
+                int texHeight = texWidth;
                 m_resultRT = new RenderTexture(texWidth, texHeight, 16, RenderTextureFormat.ARGB32);
                 m_resultRT.Create();
                 m_resultRT.name = "resultRenderTexture";
