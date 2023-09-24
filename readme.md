@@ -3,11 +3,14 @@
 Panorama180 To Pinholeは、パノラマ180のSideBySide、またはFishEyeの動画から1フレーム5枚のPinholeとしてのキャプチャを行いファイル出力するアセットです。     
 パノラマ画像は魚眼のゆがみがありますが、これをゆがみのない画像にして出力します。     
 
-元の動画は以下のようなEquirectangularで180度分を使用した、ステレオの配置です。      
+元の動画は以下のようなEquirectangularで180度分を使用した、ステレオの配置を使用できます。      
 ![panoramaToPinhole_01.jpg](./images/panoramaToPinhole_01.jpg)     
 この左側の画像が使用されます。     
 
-また、単眼の指定にも対応しています。      
+また、単眼の指定や魚眼の指定にも対応しています。      
+以下は単眼 + 魚眼の例です。     
+![panoramaToPinhole_10.jpg](./images/panoramaToPinhole_10.jpg)     
+
 
 ## 開発環境
 
@@ -69,6 +72,7 @@ Panorama180ToPinholeコンポーネントのパラメータの説明です。
 |Stop Video|再生中の動画を一時停止します。|     
 |Camera - Eye Type|Single Eye : 動画は単眼<br>Two Sides(Side By Side) : 動画はステレオ（Side By Side）|     
 |Camera - Lens Type|EquirectangularまたはFish Eyeを選択。|     
+|Capture - Background Texture Size|半球に投影する背景のテクスチャサイズを指定|     
 |Capture - Camera FOV(H)|Pinhole画像を作成するカメラの垂直視野角度（度数）|     
 |Capture - Camera Tilt(H)|カメラの視線方向からの水平の向きのずれ（度数）<br>![panoramaToPinhole_09.png](./images/panoramaToPinhole_09.png)<br>左右のカメラである"camera_1"、"camera_2"はY軸中心で指定の角度分傾きます。|     
 |Capture - Camera Tilt(V)|カメラの視線方向からの垂直の向きのずれ（度数）<br>上下のカメラである"camera_3"、"camera_4"はX軸中心で指定の角度分傾きます。|     
