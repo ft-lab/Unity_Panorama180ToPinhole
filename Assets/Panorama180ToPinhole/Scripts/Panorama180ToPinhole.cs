@@ -25,6 +25,20 @@ namespace Panorama180ToPinhole
             FishEye
         }
 
+        // カメラのFOVプリセット.
+        public enum CameraFOVPresetType {
+            None,                   // 未使用.
+            Custom,                 // カスタム.
+            GoPro7_4x3_wide,        // 4x3 広角(ズーム0) 122.6 x 94.4
+            GoPro7_16x9_wide,       // 16x9 広角(ズーム0) 118.2 x 69.5
+            GoPro12_4x3_wide_HyperSmooth_on,       // 4x3 広角, HyperSmooth On (113 x 87)
+            GoPro12_4x3_wide_HyperSmooth_off,      // 4x3 広角, HyperSmooth Off (121 x 93)
+            GoPro12_16x9_wide_HyperSmooth_on,      // 16x9 広角, HyperSmooth On (109 x 63)
+            GoPro12_16x9_wide_HyperSmooth_off,     // 16x9 広角, HyperSmooth Off (118 x 69)
+            GoPro12_8x7_wide_HyperSmooth_on,       // 8x7 広角, HyperSmooth On (113 x 100)
+            GoPro12_8x7_wide_HyperSmooth_off,      // 8x7 広角, HyperSmooth Off (122 x 108)
+        }
+
         // 動画を貼り付ける背景のRenderTextureのサイズ.
         public enum BackgroundTextureSize {
             TextureSize_1024,
@@ -40,6 +54,9 @@ namespace Panorama180ToPinhole
         [SerializeField] [HideInInspector] bool CameraParam_foldout = true;        // Cameraグループの表示.
         [SerializeField] [HideInInspector] VideoEyesType CameraEyesType = VideoEyesType.TwoEyes;   // 単眼か2眼か.
         [SerializeField] [HideInInspector] VideoLensType CameraLensType = VideoLensType.Equirectangular;   // パノラマ180か魚眼か.
+        [SerializeField] [HideInInspector] CameraFOVPresetType CameraPresetType = CameraFOVPresetType.None;   // カメラのFOVプリセット.
+        [SerializeField] [HideInInspector] float CameraFOVH = 180.0f;       // カメラの視野角度(H)
+        [SerializeField] [HideInInspector] float CameraFOVV = 180.0f;       // カメラの視野角度(V)
 
         // キャプチャのパラメータ.
         [SerializeField] [HideInInspector] bool CaptureParam_foldout = true;   // Captureグループの表示.
@@ -55,6 +72,10 @@ namespace Panorama180ToPinhole
         [SerializeField] [HideInInspector] double OutputCaptureFPS = 2.0;   // キャプチャのfps.
         [SerializeField] [HideInInspector] bool OutputFiles = true;   // ファイルを出力するか.
         [SerializeField] [HideInInspector] string OutputPath = "Output";  // 出力パス.
+        [SerializeField] [HideInInspector] bool OutputSpecifyRange = false;   // 範囲を指定.
+        [SerializeField] [HideInInspector] float OutputStartTimeSec = 0.0f;   // 開始時間（秒）.
+        [SerializeField] [HideInInspector] float OutputEndTimeSec = 0.0f;   // 終了時間（秒）.
+
 
         // ------------------------------------.
 
@@ -174,6 +195,10 @@ namespace Panorama180ToPinhole
                 // 元画像のアスペクト比.
                 float aspect = (float)m_backgroundRT.width / (float)m_backgroundRT.height;
                 m_FishEyeMat.SetFloat("_TextureAspect", aspect);
+
+                // カメラの視野角度.
+                m_FishEyeMat.SetFloat("_CameraFOVH", (CameraPresetType == CameraFOVPresetType.None) ? 180.0f : CameraFOVH);
+                m_FishEyeMat.SetFloat("_CameraFOVV", (CameraPresetType == CameraFOVPresetType.None) ? 180.0f : CameraFOVV);
 
                 Graphics.Blit(null, m_resultRT, m_FishEyeMat);
             }

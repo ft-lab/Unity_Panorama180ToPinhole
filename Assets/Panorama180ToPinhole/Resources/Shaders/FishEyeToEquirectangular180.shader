@@ -47,6 +47,8 @@ Shader "Hidden/Panorama180ToPinhole/FishEyeToEquirectangular180"
             float4 _BackgroundColor;      // Background color.
             float _TextureAspect = 1.0;   // width / height.
             int _IsSBS = 0;				  // 0 : Two eyes, 1: Single eye.
+            float _CameraFOVH = 180.0;    // Camera FOV(H).
+            float _CameraFOVV = 180.0;    // Camera FOV(V).
 
             v2f vert (appdata_img v)
             {
@@ -89,7 +91,19 @@ Shader "Hidden/Panorama180ToPinhole/FishEyeToEquirectangular180"
                 // Fisheye lens correction.
                 if (_FishEye == 1) {
                     uv = convFishEyeToEquirectangular(uv);
-                    uv.y = (uv.y - 0.5) * _TextureAspect + 0.5;
+
+                    if (abs(_CameraFOVH - 180.0) > 1e-5 || abs(_CameraFOVV - 180.0) > 1e-5) {
+                        float centerU = 0.5;
+                        float centerV = 0.5;
+                        float mx = 180.0 / _CameraFOVH;
+                        float my = 180.0 / _CameraFOVV;
+
+                        uv.x = (uv.x - centerU) * mx + centerU;
+                        uv.y = (uv.y - centerV) * my + centerV;
+                    } else {
+                        // For true fisheye.
+                        uv.y = (uv.y - 0.5) * _TextureAspect + 0.5;
+                    }
                 }
                 if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) return col;
 

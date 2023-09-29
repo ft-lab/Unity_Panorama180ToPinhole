@@ -31,6 +31,9 @@ namespace Panorama180ToPinhole
             var CameraParam_foldout = serializedObject.FindProperty("CameraParam_foldout");
             var CameraEyesType = serializedObject.FindProperty("CameraEyesType");
             var CameraLensType = serializedObject.FindProperty("CameraLensType");
+            var CameraPresetType = serializedObject.FindProperty("CameraPresetType");
+            var CameraFOVH = serializedObject.FindProperty("CameraFOVH");
+            var CameraFOVV = serializedObject.FindProperty("CameraFOVV");
 
             var CaptureParam_foldout = serializedObject.FindProperty("CaptureParam_foldout");
             var CaptureBackgroundTextureSize = serializedObject.FindProperty("CaptureBackgroundTextureSize");
@@ -43,6 +46,9 @@ namespace Panorama180ToPinhole
             var OutputCaptureFPS = serializedObject.FindProperty("OutputCaptureFPS");
             var OutputFiles = serializedObject.FindProperty("OutputFiles");
             var OutputPath = serializedObject.FindProperty("OutputPath");
+            var OutputSpecifyRange = serializedObject.FindProperty("OutputSpecifyRange");
+            var OutputStartTimeSec = serializedObject.FindProperty("OutputStartTimeSec");
+            var OutputEndTimeSec = serializedObject.FindProperty("OutputEndTimeSec");
 
             GUI.enabled = true;
 
@@ -53,6 +59,53 @@ namespace Panorama180ToPinhole
             if (CameraParam_foldout.boolValue) {
                 CameraEyesType.intValue = EditorGUILayout.Popup("Eyes Type", CameraEyesType.intValue, new string[]{"Single Eye", "Two Eyes (Side By Side)"});
                 CameraLensType.intValue = EditorGUILayout.Popup("Lens Type", CameraLensType.intValue, new string[]{"Equirectangular", "Fish Eye"});
+                CameraPresetType.intValue = EditorGUILayout.Popup("Camera Preset", CameraPresetType.intValue,
+                        new string[]{"None", "Custom", "GoPro 6-7 : 4 x 3 : Wide", "GoPro 6-7 : 16 x 9 : Wide",
+                                 "GoPro 12 : 4 x 3 : Wide : HyperSmooth On", "GoPro 12 : 4 x 3 : Wide : HyperSmooth Off",
+                                 "GoPro 12 : 16 x 9 : Wide : HyperSmooth On", "GoPro 12 : 16 x 9 : Wide : HyperSmooth Off",
+                                 "GoPro 12 : 8 x 7 : Wide : HyperSmooth On", "GoPro 12 : 8 x 7 : Wide : HyperSmooth Off"
+                                 });
+
+                GUI.enabled = (CameraPresetType.intValue == 1);
+                if (CameraPresetType.intValue >= 2) {
+                    switch ((Panorama180ToPinhole.CameraFOVPresetType)CameraPresetType.intValue) {
+                        case Panorama180ToPinhole.CameraFOVPresetType.GoPro7_4x3_wide:
+                            CameraFOVH.floatValue = 122.6f;
+                            CameraFOVV.floatValue = 94.4f;
+                            break;
+                        case Panorama180ToPinhole.CameraFOVPresetType.GoPro7_16x9_wide:
+                            CameraFOVH.floatValue = 118.2f;
+                            CameraFOVV.floatValue = 69.5f;
+                            break;
+                        case Panorama180ToPinhole.CameraFOVPresetType.GoPro12_4x3_wide_HyperSmooth_on:
+                            CameraFOVH.floatValue = 113.0f;
+                            CameraFOVV.floatValue = 87.0f;
+                            break;
+                        case Panorama180ToPinhole.CameraFOVPresetType.GoPro12_4x3_wide_HyperSmooth_off:
+                            CameraFOVH.floatValue = 121.0f;
+                            CameraFOVV.floatValue = 93.0f;
+                            break;
+                        case Panorama180ToPinhole.CameraFOVPresetType.GoPro12_16x9_wide_HyperSmooth_on:
+                            CameraFOVH.floatValue = 109.0f;
+                            CameraFOVV.floatValue = 63.0f;
+                            break;
+                        case Panorama180ToPinhole.CameraFOVPresetType.GoPro12_16x9_wide_HyperSmooth_off:
+                            CameraFOVH.floatValue = 118.0f;
+                            CameraFOVV.floatValue = 69.0f;
+                            break;
+                        case Panorama180ToPinhole.CameraFOVPresetType.GoPro12_8x7_wide_HyperSmooth_on:
+                            CameraFOVH.floatValue = 113.0f;
+                            CameraFOVV.floatValue = 100.0f;
+                            break;
+                        case Panorama180ToPinhole.CameraFOVPresetType.GoPro12_8x7_wide_HyperSmooth_off:
+                            CameraFOVH.floatValue = 122.0f;
+                            CameraFOVV.floatValue = 108.0f;
+                            break;
+                    }
+                }
+                CameraFOVH.floatValue = EditorGUILayout.Slider("Camera FOV(H)", CameraFOVH.floatValue, 0.01f, 180.0f);
+                CameraFOVV.floatValue = EditorGUILayout.Slider("Camera FOV(V)", CameraFOVV.floatValue, 0.01f, 180.0f);
+                GUI.enabled = true;
             }
 
             CaptureParam_foldout.boolValue = EditorGUILayout.Foldout(CaptureParam_foldout.boolValue, "Capture");
@@ -70,6 +123,13 @@ namespace Panorama180ToPinhole
 
                 OutputTextureSize.vector2IntValue = EditorGUILayout.Vector2IntField("Texture Size", OutputTextureSize.vector2IntValue);
                 OutputCaptureFPS.floatValue = EditorGUILayout.Slider("Capture fps", OutputCaptureFPS.floatValue, 0.01f, 30.0f);
+
+                OutputSpecifyRange.boolValue = EditorGUILayout.Toggle("SpecifyRange", OutputSpecifyRange.boolValue);
+                GUI.enabled = OutputFiles.boolValue && OutputSpecifyRange.boolValue;
+                OutputStartTimeSec.floatValue = EditorGUILayout.FloatField("Start Time (sec)", OutputStartTimeSec.floatValue);
+                OutputEndTimeSec.floatValue = EditorGUILayout.FloatField("End Time (sec)", OutputEndTimeSec.floatValue);
+
+                GUI.enabled = OutputFiles.boolValue;
                 OutputPath.stringValue = EditorGUILayout.TextField("Output Path", OutputPath.stringValue);
 
                 GUI.enabled = true;
