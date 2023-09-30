@@ -75,7 +75,7 @@ GoProの場合は、"Eyes Type"は"Single Eye"、"Lens Type"は"Fish Eye"を指�
 加工が入ったリニアやHyperView、SuperViewでは使用できません。     
 
 Max Lens Mod 1または2を使用して魚眼で使用する場合は、GoPro本体のMaxレンズをオフにして純粋な魚眼のみを使用。     
-Panorama180 To Pinholeの"Camrea Preset"は"None"を指定するようにしてください。      
+Panorama180 To Pinholeの"Camera Preset"は"None"を指定するようにしてください。      
 
 参考 : https://community.gopro.com/s/article/HERO12-Black-Digital-Lenses-FOV-Information?language=ja     
 
