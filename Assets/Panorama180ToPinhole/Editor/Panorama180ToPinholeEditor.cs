@@ -132,7 +132,7 @@ namespace Panorama180ToPinhole
                 OutputTextureSize.vector2IntValue = EditorGUILayout.Vector2IntField("Texture Size", OutputTextureSize.vector2IntValue);
                 OutputCaptureFPS.floatValue = EditorGUILayout.Slider("Capture fps", OutputCaptureFPS.floatValue, 0.01f, 30.0f);
 
-                OutputSpecifyRange.boolValue = EditorGUILayout.Toggle("SpecifyRange", OutputSpecifyRange.boolValue);
+                OutputSpecifyRange.boolValue = EditorGUILayout.Toggle("Specify Range", OutputSpecifyRange.boolValue);
                 GUI.enabled = OutputFiles.boolValue && OutputSpecifyRange.boolValue;
                 OutputStartTimeSec.floatValue = EditorGUILayout.FloatField("Start Time (sec)", OutputStartTimeSec.floatValue);
                 OutputEndTimeSec.floatValue = EditorGUILayout.FloatField("End Time (sec)", OutputEndTimeSec.floatValue);

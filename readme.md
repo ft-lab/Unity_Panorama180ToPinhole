@@ -62,22 +62,65 @@ Playすると、はじめにパノラマ動画が読み込まれ、"Output Path"
 すべての画像が出力されると、Consoleウィンドウに"Finished!"と表示されます。     
 これが表示されたら、Playを停止してください。    
 
+## GoPro広角の場合の視野角度を指定
+
+GoProの場合は、"Eyes Type"は"Single Eye"、"Lens Type"は"Fish Eye"を指定します。      
+また、広角の場合は"Camera Preset"で視野角度を指定することで、完全な魚眼でない場合でもPinholeとしての画像を得ることができます。     
+"Camera Preset"では、いくつかプリセットを用意しています。      
+![panoramaToPinhole_11.png](./images/panoramaToPinhole_11.png)     
+もし、別のGoProのバージョンの場合は"Custom"を選択することで、"Camera FOV(H)"、"Camera FOV(V)"を個別に調整できます。     
+これは水平、垂直方向の視野角度を度数で指定します。      
+
+この視野角度の指定は、GoProの"広角"で使用できる点に注意してください。     
+加工が入ったリニアやHyperView、SuperViewでは使用できません。     
+
+Max Lens Mod 1または2を使用して魚眼で使用する場合は、GoPro本体のMaxレンズをオフにして純粋な魚眼のみを使用。     
+Panorama180 To Pinholeの"Camrea Preset"は"None"を指定するようにしてください。      
+
+参考 : https://community.gopro.com/s/article/HERO12-Black-Digital-Lenses-FOV-Information?language=ja     
+
 ## パラメータ
 
 Panorama180ToPinholeコンポーネントのパラメータの説明です。     
+
+### 共通パラメータ
 
 |パラメータ名|説明|     
 |---|---|     
 |Video Clip|パノラマ180ステレオ(Side By Side)の動画、<br>FishEyeの動画を指定。<br>単眼、パノラマのどちらでも指定できます。|     
 |Stop Video|再生中の動画を一時停止します。|     
-|Camera - Eye Type|Single Eye : 動画は単眼<br>Two Sides(Side By Side) : 動画はステレオ（Side By Side）|     
-|Camera - Lens Type|EquirectangularまたはFish Eyeを選択。|     
-|Capture - Background Texture Size|半球に投影する背景のテクスチャサイズを指定|     
-|Capture - Camera FOV(H)|Pinhole画像を作成するカメラの垂直視野角度（度数）|     
-|Capture - Camera Tilt(H)|カメラの視線方向からの水平の向きのずれ（度数）<br>![panoramaToPinhole_09.png](./images/panoramaToPinhole_09.png)<br>左右のカメラである"camera_1"、"camera_2"はY軸中心で指定の角度分傾きます。|     
-|Capture - Camera Tilt(V)|カメラの視線方向からの垂直の向きのずれ（度数）<br>上下のカメラである"camera_3"、"camera_4"はX軸中心で指定の角度分傾きます。|     
-|Output - Output Files|Pinholeの静止画を出力する場合はOnにします。|     
-|Output - Texture Size|出力するテクスチャサイズをピクセル数で指定|     
-|Output - Capture fps|1秒でサンプリングするフレーム数。<br>1.0の場合は、1秒ごとに1フレーム分（合計5枚）が出力されることになります。|     
-|Output - Output Path|出力フォルダ。<br>相対パスで指定した場合は、Projectのルートからのパスになります。絶対パス指定も可能です（フォルダ選択のUIは作ってません、、、）。|     
 
+### Camera
+
+|パラメータ名|説明|     
+|---|---|     
+|Eye Type|Single Eye : 動画は単眼<br>Two Sides(Side By Side) : 動画はステレオ（Side By Side）|     
+|Lens Type|EquirectangularまたはFish Eyeを選択。|     
+|Camera Preset|GoProの場合の視野角度のプリセットを選択。|     
+|Camera FOV(H)|"Camera Preset"がOnの場合、垂直視野角度を指定。|     
+|Camera FOV(V)|"Camera Preset"がOnの場合、水平視野角度を指定。|     
+
+### Capture
+
+|パラメータ名|説明|     
+|---|---|     
+|Background Texture Size|半球に投影する背景のテクスチャサイズを指定|     
+|Camera FOV(H)|Pinhole画像を作成するカメラの垂直視野角度（度数）|     
+|Camera Tilt(H)|カメラの視線方向からの水平の向きのずれ（度数）<br>![panoramaToPinhole_09.png](./images/panoramaToPinhole_09.png)<br>左右のカメラである"camera_1"、"camera_2"はY軸中心で指定の角度分傾きます。|     
+|Camera Tilt(V)|カメラの視線方向からの垂直の向きのずれ（度数）<br>上下のカメラである"camera_3"、"camera_4"はX軸中心で指定の角度分傾きます。|     
+
+### Output
+
+|パラメータ名|説明|     
+|---|---|     
+|Output Files|Pinholeの静止画を出力する場合はOnにします。|     
+|Texture Size|出力するテクスチャサイズをピクセル数で指定|     
+|Capture fps|1秒でサンプリングするフレーム数。<br>1.0の場合は、1秒ごとに1フレーム分（合計5枚）が出力されることになります。|     
+|Specify Range|Onにすると、キャプチャ動画の開始時間と終了時間を指定します。|     
+|Start Time (sec)|"Specify Range"がOnの場合、開始時間を指定します。|     
+|End Time (sec)|"Specify Range"がOnの場合、終了時間を指定します。|     
+|Output Path|出力フォルダ。<br>相対パスで指定した場合は、Projectのルートからのパスになります。絶対パス指定も可能です。|     
+
+## 更新履歴
+
+* [更新履歴](./ChangeLog.md)    
