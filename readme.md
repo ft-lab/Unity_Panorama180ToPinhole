@@ -71,6 +71,10 @@ GoProの場合は、"Eyes Type"は"Single Eye"、"Lens Type"は"Fish Eye"を指�
 もし、別のGoProのバージョンの場合は"Custom"を選択することで、"Camera FOV(H)"、"Camera FOV(V)"を個別に調整できます。     
 これは水平、垂直方向の視野角度を度数で指定します。      
 
+以下は、GoPro12で広角 8x7、HyperSmooth On で撮影したものを使用しました。     
+![panoramaToPinhole_12.jpg](./images/panoramaToPinhole_12.jpg)     
+
+
 この視野角度の指定は、GoProの"広角"で使用できる点に注意してください。     
 加工が入ったリニアやHyperView、SuperViewでは使用できません。     
 
