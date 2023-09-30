@@ -20,6 +20,14 @@ namespace Panorama180ToPinhole
         }
 
         /**
+         * パスの変更のフォルダ選択ダイアログボックスを表示.
+         */
+        private string m_selectPath (string currentPath) {
+            string retPath = EditorUtility.SaveFolderPanel("Select Path", currentPath, "");
+            return (retPath == "") ? currentPath : retPath;
+        }
+
+        /**
          * InspectorのカスタムGUI表示.
          */
         public override void OnInspectorGUI () {
@@ -130,7 +138,16 @@ namespace Panorama180ToPinhole
                 OutputEndTimeSec.floatValue = EditorGUILayout.FloatField("End Time (sec)", OutputEndTimeSec.floatValue);
 
                 GUI.enabled = OutputFiles.boolValue;
+
+                GUILayout.BeginHorizontal();
                 OutputPath.stringValue = EditorGUILayout.TextField("Output Path", OutputPath.stringValue);
+                if (GUILayout.Button(new GUIContent("Select ...", "Display folder selection dialog box"), GUILayout.Width(70))) {
+                    OutputPath.stringValue = m_selectPath(OutputPath.stringValue);
+                    // "EndLayoutGroup: BeginLayoutGroup must be called first. "が出るのを避ける.
+                    serializedObject.ApplyModifiedProperties();
+                    GUIUtility.ExitGUI();
+                }
+                GUILayout.EndHorizontal();
 
                 GUI.enabled = true;
             }
