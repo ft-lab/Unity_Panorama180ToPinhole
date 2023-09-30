@@ -80,7 +80,7 @@ namespace Panorama180ToPinhole
         // ------------------------------------.
 
         private RenderTexture m_backgroundRT = null;         // 動画をレンダリングするテクスチャ.
-        private RenderTexture m_resultRT = null;         // 結果のテクスチャ.
+        private RenderTexture m_resultRT = null;             // 結果のテクスチャ.
 
         private List<GameObject> m_camerasList = null;              // Pinhole投影を行うカメラ.
         private List<RenderTexture> m_renderTextureList = null;     // RenderTexture.
@@ -89,6 +89,7 @@ namespace Panorama180ToPinhole
 
         private GameObject m_videoG;        // VideoPlayerのGameObject.
         private VideoPlayer m_videoPlayer;  // Video Player.
+        private bool m_finished = false;    // 出力が終了したか.
 
         private double m_curTime = 0.0;     // 動画のカレント時間.
         private int m_counter = 0;          // 連番のカウンタ.
@@ -124,11 +125,17 @@ namespace Panorama180ToPinhole
             // Videoを再生.
             if (m_videoPlayer != null) {
                 m_videoPlayer.Play();
+
+                // 範囲指定がある場合は、開始時間を変更.
+                if (OutputSpecifyRange) {
+                    m_videoPlayer.time = OutputStartTimeSec;
+                }
             }
 
             m_outputBusy = false;
             m_curTime = 0.0;
             m_counter = 0;
+            m_finished = false;
         }
 
         void OnDestroy()
@@ -213,13 +220,15 @@ namespace Panorama180ToPinhole
             // VideoClipからRenderTextureに反映.
             UpdateBackgroundTexture();
 
+            if (m_finished) return;
+
             if (!m_outputBusy)
             {
                 if (StopVideo) {
                     m_videoPlayer.Pause();
                     return;
                 } else {
-                    m_videoPlayer.Play();
+                    if (!m_videoPlayer.isPlaying) m_videoPlayer.Play();
                 }
             }
 
@@ -262,8 +271,12 @@ namespace Panorama180ToPinhole
 
             m_outputBusy = false;
 
+            double maxLength = (OutputSpecifyRange && OutputEndTimeSec > 1e-5 && OutputStartTimeSec < OutputEndTimeSec) ? OutputEndTimeSec : m_videoPlayer.length;
+            maxLength = Math.Min(maxLength, m_videoPlayer.length);
+            double startTimeSec = OutputSpecifyRange ? OutputStartTimeSec : 0.0;
+
             if (OutputFiles) {
-                int persV = (int)((m_curTime * 100.0) / m_videoPlayer.length);
+                int persV = (int)(((m_curTime - startTimeSec) * 100.0) / (maxLength - startTimeSec));
                 Debug.Log($"Process : {persV} %");
             }
 
@@ -272,8 +285,9 @@ namespace Panorama180ToPinhole
 
             if (OutputFiles) {
                 double delta = 1.0 / Math.Max(OutputCaptureFPS, 0.0001);
-                if (m_curTime + delta >= m_videoPlayer.length) {
+                if (m_curTime + delta >= maxLength) {
                     Debug.Log("Finished!");
+                    m_finished = true;
                 }
             }
         }
