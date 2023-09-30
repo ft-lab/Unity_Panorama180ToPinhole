@@ -97,8 +97,8 @@ Panorama180ToPinholeコンポーネントのパラメータの説明です。
 |Eye Type|Single Eye : 動画は単眼<br>Two Sides(Side By Side) : 動画はステレオ（Side By Side）|     
 |Lens Type|EquirectangularまたはFish Eyeを選択。|     
 |Camera Preset|GoProの場合の視野角度のプリセットを選択。|     
-|Camera FOV(H)|"Camera Preset"がOnの場合、垂直視野角度を指定。|     
-|Camera FOV(V)|"Camera Preset"がOnの場合、水平視野角度を指定。|     
+|Camera FOV(H)|"Camera Preset"がOnの場合、水平視野角度を指定。|     
+|Camera FOV(V)|"Camera Preset"がOnの場合、垂直視野角度を指定。|     
 
 ### Capture
 
