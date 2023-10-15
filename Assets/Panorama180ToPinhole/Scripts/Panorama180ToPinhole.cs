@@ -62,6 +62,8 @@ namespace Panorama180ToPinhole
         [SerializeField] [HideInInspector] bool CaptureParam_foldout = true;   // Captureグループの表示.
         [SerializeField] [HideInInspector] BackgroundTextureSize CaptureBackgroundTextureSize = BackgroundTextureSize.TextureSize_4096;   // 背景として描画するRenderTextureのサイズ.
         [SerializeField] [HideInInspector] float CaptureCameraFOV = 60.0f;   // 視野角度.
+        [SerializeField] [HideInInspector] bool CaptureCameraLeftRight = true;   // 左右を出力対象にするか.
+        [SerializeField] [HideInInspector] bool CaptureCameraTopBottom = true;   // 上下を出力対象にするか.
         [SerializeField] [HideInInspector] float CaptureCameraTiltH = 30.0f;   // 各カメラの傾き(水平).
         [SerializeField] [HideInInspector] float CaptureCameraTiltV = 20.0f;   // 各カメラの傾き（垂直）.
 
@@ -75,7 +77,6 @@ namespace Panorama180ToPinhole
         [SerializeField] [HideInInspector] bool OutputSpecifyRange = false;   // 範囲を指定.
         [SerializeField] [HideInInspector] float OutputStartTimeSec = 0.0f;   // 開始時間（秒）.
         [SerializeField] [HideInInspector] float OutputEndTimeSec = 0.0f;   // 終了時間（秒）.
-
 
         // ------------------------------------.
 
@@ -256,15 +257,15 @@ namespace Panorama180ToPinhole
 
             yield return new WaitForEndOfFrame();
 
-            for (int i = 0; i < 5; ++i)
-            {
+            for (int i = 0; i < 5; ++i) {
                 RenderTexture rt = m_renderTextureList[i];
 
                 // ファイル出力.
-                if (OutputFiles)
-                {
-                    string filePath = $"{OutputPath}/image_{i}" + string.Format("{0:D5}", m_counter) + ".jpg";
-                    SaveRenderTextureToFile(rt, filePath);
+                if (OutputFiles) {
+                    if (i == 0 || ((i == 1 || i == 2) && CaptureCameraLeftRight) || ((i == 3 || i == 4) && CaptureCameraTopBottom)) {
+                        string filePath = $"{OutputPath}/image_{i}" + string.Format("{0:D5}", m_counter) + ".jpg";
+                        SaveRenderTextureToFile(rt, filePath);
+                    }
                 }
             }
             m_counter++;

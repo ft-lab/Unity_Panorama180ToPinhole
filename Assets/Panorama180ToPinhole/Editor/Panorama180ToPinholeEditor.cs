@@ -46,6 +46,8 @@ namespace Panorama180ToPinhole
             var CaptureParam_foldout = serializedObject.FindProperty("CaptureParam_foldout");
             var CaptureBackgroundTextureSize = serializedObject.FindProperty("CaptureBackgroundTextureSize");
             var CaptureCameraFOV = serializedObject.FindProperty("CaptureCameraFOV");
+            var CaptureCameraLeftRight = serializedObject.FindProperty("CaptureCameraLeftRight");
+            var CaptureCameraTopBottom = serializedObject.FindProperty("CaptureCameraTopBottom");
             var CaptureCameraTiltH = serializedObject.FindProperty("CaptureCameraTiltH");
             var CaptureCameraTiltV = serializedObject.FindProperty("CaptureCameraTiltV");
 
@@ -57,6 +59,9 @@ namespace Panorama180ToPinhole
             var OutputSpecifyRange = serializedObject.FindProperty("OutputSpecifyRange");
             var OutputStartTimeSec = serializedObject.FindProperty("OutputStartTimeSec");
             var OutputEndTimeSec = serializedObject.FindProperty("OutputEndTimeSec");
+
+            var TestParam_foldout = serializedObject.FindProperty("TextParam_foldout");
+            var TestTexture = serializedObject.FindProperty("TestTexture");
 
             GUI.enabled = true;
 
@@ -120,8 +125,16 @@ namespace Panorama180ToPinhole
             if (CaptureParam_foldout.boolValue) {
                 CaptureBackgroundTextureSize.intValue = EditorGUILayout.Popup("Background Texture Size", CaptureBackgroundTextureSize.intValue, new string[]{"1024", "2048", "4096", "8192"});
                 CaptureCameraFOV.floatValue = EditorGUILayout.Slider("Camera FOV(H)", CaptureCameraFOV.floatValue, 10.0f, 180.0f);
+
+                CaptureCameraLeftRight.boolValue = EditorGUILayout.Toggle("Capture Left/Right", CaptureCameraLeftRight.boolValue);
+                CaptureCameraTopBottom.boolValue = EditorGUILayout.Toggle("Capture Top/Bottom", CaptureCameraTopBottom.boolValue);
+
+                GUI.enabled = CaptureCameraLeftRight.boolValue;
                 CaptureCameraTiltH.floatValue = EditorGUILayout.Slider("Camera Tilt(H)", CaptureCameraTiltH.floatValue, 0.0f, 90.0f);
+
+                GUI.enabled = CaptureCameraTopBottom.boolValue;
                 CaptureCameraTiltV.floatValue = EditorGUILayout.Slider("Camera Tilt(V)", CaptureCameraTiltV.floatValue, 0.0f, 90.0f);
+                GUI.enabled = true;
             }
 
             OutputParam_foldout.boolValue = EditorGUILayout.Foldout(OutputParam_foldout.boolValue, "Output");
