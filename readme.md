@@ -110,8 +110,14 @@ Panorama180ToPinholeコンポーネントのパラメータの説明です。
 |---|---|     
 |Background Texture Size|半球に投影する背景のテクスチャサイズを指定|     
 |Camera FOV(H)|Pinhole画像を作成するカメラの垂直視野角度（度数）|     
+|Capture Left/Right|左右に向いた画像をキャプチャ。デフォルトOn。|     
+|Capture Top/Bottom|上下に向いた画像をキャプチャ。デフォルトOn。|     
 |Camera Tilt(H)|カメラの視線方向からの水平の向きのずれ（度数）<br>![panoramaToPinhole_09.png](./images/panoramaToPinhole_09.png)<br>左右のカメラである"camera_1"、"camera_2"はY軸中心で指定の角度分傾きます。|     
 |Camera Tilt(V)|カメラの視線方向からの垂直の向きのずれ（度数）<br>上下のカメラである"camera_3"、"camera_4"はX軸中心で指定の角度分傾きます。|     
+
+"Capture Left/Right"チェックボックスをOnにすることで、"Camera Tilt(H)"の向きだけ水平方向に傾けた画像を出力します。     
+"Capture Top/Bottom"チェックボックスをOnにすることで、"Camera Tilt(V)"の向きだけ垂直方向に傾けた画像を出力します。     
+もし、1フレーム出力するときに正面だけを出力したい場合は、"Capture Left/Right"と"Capture Top/Bottom"チェックボックスをOffにするようにしてください。      
 
 ### Output
 
